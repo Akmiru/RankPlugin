@@ -29,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RankPlugin extends JavaPlugin implements Listener {
 
+    private RankPermissionManager permissionManager;
+
     private final Map<String, String> playerRanks = new ConcurrentHashMap<>();
 
     private final Map<String, ChatColor> rankColors = new HashMap<>();
@@ -36,7 +38,6 @@ public class RankPlugin extends JavaPlugin implements Listener {
     private File ranksFile;
     private FileConfiguration ranksConfig;
     private TabListManager tabListManager;
-    private File permissionsFile;
     private FileConfiguration permissionsConfig;
     private HashMap<UUID, PermissionAttachment> playerPermissions = new HashMap<>();
 
@@ -47,14 +48,15 @@ public class RankPlugin extends JavaPlugin implements Listener {
 
         // Initialize files
         createRanksFile();
-        createPermissionsFile();
+
+        //Permission Manager
+        permissionManager = new RankPermissionManager();
 
         // Load ranks from file asynchronously
         new BukkitRunnable() {
             @Override
             public void run() {
                 loadRanksFromFile();
-                loadPermissionsFromFile();
 
             }
         }.runTaskAsynchronously(this);
@@ -156,34 +158,8 @@ public class RankPlugin extends JavaPlugin implements Listener {
         }
 
         // List of permissions based on rank
-        List<String> permissions = new ArrayList<>();
-        switch (rank) {
-            case "Owner":
-                permissions.add("essentials.*");
-                permissions.add("minecraft.command.*");
-                break;
-            case "Admin":
-                permissions.add("essentials.ban");
-                permissions.add("essentials.kick");
-                permissions.add("essentials.tp");
-                permissions.add("essentials.tp.position");
-                permissions.add("essentials.tp.others");
-                permissions.add("minecraft.command.gamemode");
-                break;
-            case "Helper":
-                permissions.add("essentials.help");
-                break;
-            case "Moderator":
-                permissions.add("essentials.kick");
-                permissions.add("essentials.mute");
-                permissions.add("essentials.tp");
-                permissions.add("essentials.tp.others");
-                break;
-            default:  // Default rank is Player
+        List<String> permissions = permissionManager.getPermissionsForRank(rank);
 
-
-                break;
-        }
 
         // Remove any old permission attachment for this player
         if (playerPermissions.containsKey(player.getUniqueId())) {
@@ -207,9 +183,6 @@ public class RankPlugin extends JavaPlugin implements Listener {
 
         getLogger().info("Permissions assigned for " + player.getName() + ": " + player.getEffectivePermissions());
     }
-
-
-
 
     @EventHandler
     public void onPlayerChat(PlayerChatEvent event) {
@@ -271,19 +244,7 @@ public class RankPlugin extends JavaPlugin implements Listener {
         }
         ranksConfig = YamlConfiguration.loadConfiguration(ranksFile);
     }
-    private void createPermissionsFile() {
-        permissionsFile = new File(getDataFolder(), "permissions.yml");
-        if (!permissionsFile.exists()) {
-            try {
-                permissionsFile.createNewFile();
-                getLogger().info("Created permissions.yml file.");
-            } catch (IOException e) {
-                getLogger().severe("Could not create permissions.yml file.");
-                e.printStackTrace();
-            }
-        }
-        permissionsConfig = YamlConfiguration.loadConfiguration(permissionsFile);
-    }
+
 
     private void loadRanksFromFile() {
         if (ranksFile.exists()) {
@@ -298,22 +259,6 @@ public class RankPlugin extends JavaPlugin implements Listener {
         }
     }
 
-    private void loadPermissionsFromFile() {
-        if (permissionsFile.exists()) {
-            ConfigurationSection ranksSection = permissionsConfig.getConfigurationSection("ranks");
-            if (ranksSection != null) {
-                Set<String> ranks = ranksSection.getKeys(false);
-                for (String rank : ranks) {
-                    List<String> permissions = permissionsConfig.getStringList("ranks." + rank + ".permissions");
-                    rankPermissions.put(rank, permissions);
-                    getLogger().info("Loaded permissions for " + rank + ": " + permissions);
-                }
-                getLogger().info("Loaded permissions from permissions.yml.");
-            } else {
-                getLogger().warning("No 'ranks' section found in permissions.yml.");
-            }
-        }
-    }
 
     private void saveRanksToFile() {
         for (Map.Entry<String, String> entry : playerRanks.entrySet()) {
