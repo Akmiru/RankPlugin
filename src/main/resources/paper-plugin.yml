@@ -11,3 +11,5 @@ commands:
     rankplugin.setrank:
       description: Allows setting a player's rank
       default: op
+dependencies:
+  bootstrap:
