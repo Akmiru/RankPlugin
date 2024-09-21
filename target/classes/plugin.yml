@@ -4,10 +4,11 @@ main: Akmiru.rankPlugin.RankPlugin
 api-version: '1.21'
 commands:
   apermission:
-    description: Assings a rank to a player
+    description: Assigns a rank to a player
     usage: /apermission <player> <rank>
     permission: rankplugin.setrank
-  permissions:
-    rankplugin.setrank:
-      description: Allows setting a player's rank
-      default: op
+permissions:
+  rankplugin.setrank:
+    description: Allows setting a player's rank
+    default: op
+depend: [Essentials]
