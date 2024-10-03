@@ -33,7 +33,8 @@ public class TabListManager {
         rankWeights.put("Admin", 2);
         rankWeights.put("Moderator", 3);
         rankWeights.put("Helper", 4);
-        rankWeights.put("Player", 5); // Default rank weight
+        rankWeights.put("VIP", 5);
+        rankWeights.put("Player", 6); // Default rank weight
 
         // Initialize teams for each rank
         initializeTeams();

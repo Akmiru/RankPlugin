@@ -97,7 +97,7 @@ public class RankPlugin extends JavaPlugin implements Listener {
 
             // Validate rank
             if (!isValidRank(rank)) {
-                sender.sendMessage(ChatColor.RED + "Invalid rank. Valid ranks: Owner, Admin, Helper, Moderator");
+                sender.sendMessage(ChatColor.RED + "Invalid rank. Valid ranks: Owner, Admin, Helper, Moderator, VIP");
                 return false;
             }
 
@@ -221,13 +221,14 @@ public class RankPlugin extends JavaPlugin implements Listener {
         rankColors.put("Admin", ChatColor.GOLD);
         rankColors.put("Helper", ChatColor.BLUE);
         rankColors.put("Moderator", ChatColor.GREEN);
+        rankColors.put("VIP", ChatColor.YELLOW);
         rankColors.put("Player", ChatColor.GRAY); // Default rank color
     }
 
     private boolean isValidRank(String rank) {
         return rank.equalsIgnoreCase("Owner") || rank.equalsIgnoreCase("Admin") ||
                 rank.equalsIgnoreCase("Helper") || rank.equalsIgnoreCase("Moderator")||
-        rank.equalsIgnoreCase("Player");
+        rank.equalsIgnoreCase("Player") || rank.equalsIgnoreCase("VIP");
     }
 
     private void createRanksFile() {
@@ -258,7 +259,6 @@ public class RankPlugin extends JavaPlugin implements Listener {
             getLogger().info("Loaded ranks from ranks.yml.");
         }
     }
-
 
     private void saveRanksToFile() {
         for (Map.Entry<String, String> entry : playerRanks.entrySet()) {

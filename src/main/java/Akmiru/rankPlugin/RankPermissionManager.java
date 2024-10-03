@@ -14,6 +14,8 @@ public class RankPermissionManager {
             case "Owner":
                 permissions.add("essentials.*");
                 permissions.add("minecraft.command.*");
+                permissions.add("purpur.dolphin.*");
+                permissions.add("allow.ride.dolphin");
                 break;
             case "Admin":
                 permissions.add("essentials.ban");
@@ -26,7 +28,13 @@ public class RankPermissionManager {
             case "Helper":
                 permissions.add("essentials.help");
                 break;
+
+            case "VIP":
+                permissions.add("purpur.dolphin.*");
+                permissions.add("allow.ride.dolphin");
             case "Moderator":
+                permissions.add("essentials.tempban");
+
                 permissions.add("essentials.kick");
                 permissions.add("essentials.mute");
                 permissions.add("essentials.tp");
